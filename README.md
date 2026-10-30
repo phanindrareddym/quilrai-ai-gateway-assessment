@@ -21,6 +21,8 @@ Invalid tool arguments return the standard JSON-RPC `Invalid params` code (`-326
 
 **Verification:** Three tests cover both input models and a real stdio subprocess exchange: initialization, tool listing, successful calls, invalid inputs, and JSON-RPC output.
 
+![Task 1 MCP server test results](./screenshots/task-1-mcp-server-tests.png)
+
 ## Task 2 — MCP security gateway proxy
 
 **Assessment question:** How do you proxy MCP JSON-RPC over HTTP, identify the caller's role from a Bearer token, and prevent viewers from invoking tools named `admin_*`?
@@ -30,6 +32,8 @@ Invalid tool arguments return the standard JSON-RPC `Invalid params` code (`-326
 The proxy preserves the wire body for single requests, filters authorization and hop-by-hop headers, checks JSON-RPC request envelopes, and handles mixed batches by forwarding only allowed entries. Unknown credentials are rejected. Upstream connection and timeout failures use sanitized gateway errors.
 
 **Verification:** Eleven tests exercise admin/viewer access, transparent forwarding, no-forwarding on denial, malformed requests, mixed batches, and sanitized failures.
+
+![Task 2 security gateway test results](./screenshots/task-2-security-gateway-tests.png)
 
 ## Task 3 — Streaming LLM PII-redaction guardrail
 
@@ -41,6 +45,8 @@ The guardrail recognizes common email and US SSN patterns and redacts card-numbe
 
 **Verification:** Nine tests cover PII detection, split-chunk redaction, bounded buffering, early safe-text delivery, and provider error handling.
 
+![Task 3 streaming guardrail test results](./screenshots/task-3-streaming-guardrail-tests.png)
+
 ## Task 4 — Token-aware rate limiter and model fallback
 
 **Assessment question:** How do you enforce a per-tenant rolling token limit, fail over when the primary is rate-limited or times out after three seconds, and return errors without exposing upstream details?
@@ -50,6 +56,8 @@ The guardrail recognizes common email and US SSN patterns and redacts card-numbe
 An HTTP 429 from the primary, or failure to receive response headers or the first response bytes within three seconds, triggers one attempt against the configured backup. Successful responses are streamed. Upstream error bodies are replaced with a consistent gateway error containing a safe code, message, and request ID. Once response bytes have already been sent to a client, a later mid-stream failure cannot be transparently retried.
 
 **Verification:** Eighteen tests cover quota accounting and expiry, concurrent admission, tenant isolation, SQLite persistence, primary success, 429/timeout fallback, and sanitized provider errors.
+
+![Task 4 fallback router test results](./screenshots/task-4-fallback-router-tests.png)
 
 ## Run the tests
 
